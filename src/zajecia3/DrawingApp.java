@@ -21,6 +21,30 @@ public class DrawingApp {
                 mp.repaint();
             }
         });
+        UPButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.moveBall(0,-5); //przesun w dol o 5px
+                mp.repaint();
+            }
+        });
+        LEFTButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.moveBall(-5,0); //przesun w dol o 5px
+                mp.repaint();
+            }
+        });
+        RIGHTButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.moveBall(5,0); //przesun w dol o 5px
+                mp.repaint();
+            }
+        });
     }
 
     public static void main(String[] args) {
