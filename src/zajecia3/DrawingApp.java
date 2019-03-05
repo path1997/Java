@@ -8,18 +8,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
 public class DrawingApp {
-    private JButton LEFTButton;
-    private JButton RIGHTButton;
     private JButton DOWNButton;
     private JButton UPButton;
     private JPanel drawingPanel;
     private JPanel mainPanel;
     private JButton kolorButton;
     private JButton czyscButton;
+    private JButton koloButton;
+    private JButton kwadratButton;
+    private JButton rozmiar_button;
+    private JButton rozmiarplus_button;
 
 
     public DrawingApp() {
-        DOWNButton.addActionListener(new ActionListener() {
+        /*DOWNButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
@@ -50,7 +52,8 @@ public class DrawingApp {
                 mp.moveBall(5,0); //przesun w prawo o 5px
                 mp.repaint();
             }
-        });
+        });*/
+
         kolorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,6 +76,39 @@ public class DrawingApp {
             public void actionPerformed(ActionEvent e) {
                 MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
                 mp.czysc();
+            }
+        });
+        koloButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.setFigura("kolo");
+                mp.repaint();
+            }
+        });
+
+        kwadratButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.setFigura("kwadrat");
+                mp.repaint();
+            }
+        });
+        rozmiar_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.setRozmiar(-5);
+                mp.repaint();
+            }
+        });
+        rozmiarplus_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.setRozmiar(5);
+                mp.repaint();
             }
         });
     }

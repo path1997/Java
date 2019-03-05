@@ -7,6 +7,9 @@ import java.util.Random;
 public class MyDrawingPanel extends JPanel {
     private int x=200;
     private int y=156;
+    private int width =24;
+    private int height=18;
+    private String figura="kolo";
     private Color kolorek;
     private int czysc1=0;
 
@@ -17,7 +20,11 @@ public class MyDrawingPanel extends JPanel {
             czysc1=0;
         }
         g.setColor(kolorek);
-        g.fillOval(x-12,y-9,24,18);
+        if(figura=="kolo") {
+            g.fillOval(x - 12, y - 9, width, height);
+        } else if(figura=="kwadrat"){
+            g.drawRect(x,y,width,width);
+        }
     }
 
     public void moveBall(int dx, int dy) {
@@ -44,5 +51,13 @@ public class MyDrawingPanel extends JPanel {
         x=200;
         y=156;
         repaint();
+    }
+    public void setFigura(String figura1){
+        figura=figura1;
+    }
+    public void setRozmiar(double rozmiar){
+        width+=rozmiar;
+        height+=rozmiar;
+
     }
 }
