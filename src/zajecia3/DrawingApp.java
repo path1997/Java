@@ -1,8 +1,11 @@
 package zajecia3;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 public class DrawingApp {
     private JButton LEFTButton;
@@ -11,6 +14,9 @@ public class DrawingApp {
     private JButton UPButton;
     private JPanel drawingPanel;
     private JPanel mainPanel;
+    private JButton kolorButton;
+    private JButton czyscButton;
+
 
     public DrawingApp() {
         DOWNButton.addActionListener(new ActionListener() {
@@ -43,6 +49,30 @@ public class DrawingApp {
                 MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
                 mp.moveBall(5,0); //przesun w prawo o 5px
                 mp.repaint();
+            }
+        });
+        kolorButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.setColor();
+                mp.repaint();
+            }
+        });
+        drawingPanel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                super.mouseDragged(e);
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.moveBallTo(e.getX(),e.getY());
+                mp.repaint();
+            }
+        });
+        czyscButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                mp.czysc();
             }
         });
     }
