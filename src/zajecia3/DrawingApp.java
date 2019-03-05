@@ -25,7 +25,7 @@ public class DrawingApp {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
-                mp.moveBall(0,-5); //przesun w dol o 5px
+                mp.moveBall(0,-5); //przesun w gore o 5px
                 mp.repaint();
             }
         });
@@ -33,7 +33,7 @@ public class DrawingApp {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
-                mp.moveBall(-5,0); //przesun w dol o 5px
+                mp.moveBall(-5,0); //przesun w lewo o 5px
                 mp.repaint();
             }
         });
@@ -41,7 +41,7 @@ public class DrawingApp {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
-                mp.moveBall(5,0); //przesun w dol o 5px
+                mp.moveBall(5,0); //przesun w prawo o 5px
                 mp.repaint();
             }
         });
