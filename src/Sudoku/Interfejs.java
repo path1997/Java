@@ -1,9 +1,16 @@
 package Sudoku;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,6 +106,13 @@ public class Interfejs extends Silnik {
     private JPanel linia1;
     private JPanel linia3;
     private JButton przykładowaPoprawnaOdpowiedźButton;
+    private JPanel linia2;
+    private JPanel linia4;
+    private JPanel linia5;
+    private JPanel linia6;
+    private JPanel linia7;
+    private JPanel linia8;
+    private JPanel odstep;
     private int il_miejsc_wol;
     private boolean czy_losowano=false;
     private boolean puste_pola;
@@ -118,6 +132,10 @@ public class Interfejs extends Silnik {
                 komunikat.setText("");
                 uzupelnij_tablice();
                 il_miejsc_wol= (int) il_miejsc.getValue();
+                if(il_miejsc_wol<1){
+                    komunikat.setText("Liczba miejsc musi być większa niż 0");
+                    return;
+                }
                 wstaw_puste(il_miejsc_wol);
                 int i=0,j=0;
                 for(JTextField l : pola){
@@ -184,11 +202,13 @@ public class Interfejs extends Silnik {
 
                     if(puste_pola==false) {
                         if (sprawdz_wynik() == true) {
+                            odtworz_dzwiek("success");
                             komunikat.setText("Brawo! Wygrałeś :)");
                             for(Integer p: miejsca_puste){
                                 pola.get(p).setBackground(new Color(0, 171,0));
                             }
                         } else {
+                            odtworz_dzwiek("fail");
                             komunikat.setText("Niestety przegrałeś :(");
                             for(Integer p: miejsca_puste){
                                 for(Integer z: miejsca_zle) {
@@ -225,6 +245,22 @@ public class Interfejs extends Silnik {
             }
         });
     }
+    public void odtworz_dzwiek(String nazwa) {
+        Thread dzwiek=new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Clip clip = AudioSystem.getClip();
+                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+                            Interfejs.class.getResourceAsStream("./"+nazwa+".wav"));
+                    clip.open(inputStream);
+                    clip.start();
+                } catch (Exception e) {
+                    System.err.println("zla sciezka");
+                }
+            }
+        });
+        dzwiek.start();
+    }
 
     private void wczytaj_pola(){
         pola.add(T1);pola.add(T2);pola.add(T3);pola.add(T4);pola.add(T5);pola.add(T6);pola.add(T7);pola.add(T8);
@@ -246,8 +282,7 @@ public class Interfejs extends Silnik {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Sudoku");
-        frame.setMaximumSize(new Dimension(530,640));
-        frame.setMinimumSize(new Dimension(500, 615));
+        frame.setMinimumSize(new Dimension(500, 675));
         frame.setContentPane(new Interfejs().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
