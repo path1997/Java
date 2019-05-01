@@ -1,15 +1,14 @@
 package Sudoku;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
+import java.awt.Toolkit;
 import javax.swing.*;
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +115,7 @@ public class Interfejs extends Silnik {
     private int il_miejsc_wol;
     private boolean czy_losowano=false;
     private boolean puste_pola;
+    private int stary_stan_puste;
 
    List<JTextField> pola = new ArrayList<>();
 
@@ -127,16 +127,19 @@ public class Interfejs extends Silnik {
         losujButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                miejsca_puste.clear();
-                czy_losowano=true;
                 komunikat.setText("");
-                uzupelnij_tablice();
                 il_miejsc_wol= (int) il_miejsc.getValue();
                 if(il_miejsc_wol<1){
                     komunikat.setText("Liczba miejsc musi być większa niż 0");
+                    il_miejsc_wol=stary_stan_puste;
+                    il_miejsc.setValue(stary_stan_puste);
                     return;
                 }
+                miejsca_puste.clear();
+                uzupelnij_tablice();
                 wstaw_puste(il_miejsc_wol);
+                stary_stan_puste=il_miejsc_wol;
+                czy_losowano=true;
                 int i=0,j=0;
                 for(JTextField l : pola){
                     if(tablica[i][j]==-1){
@@ -206,6 +209,7 @@ public class Interfejs extends Silnik {
                             komunikat.setText("Brawo! Wygrałeś :)");
                             for(Integer p: miejsca_puste){
                                 pola.get(p).setBackground(new Color(0, 171,0));
+                                System.out.println(p);
                             }
                         } else {
                             odtworz_dzwiek("fail");
@@ -251,7 +255,7 @@ public class Interfejs extends Silnik {
                 try {
                     Clip clip = AudioSystem.getClip();
                     AudioInputStream inputStream = AudioSystem.getAudioInputStream(
-                            Interfejs.class.getResourceAsStream("./"+nazwa+".wav"));
+                            Interfejs.class.getResource("/Sudoku/"+nazwa+".wav"));
                     clip.open(inputStream);
                     clip.start();
                 } catch (Exception e) {
@@ -282,6 +286,7 @@ public class Interfejs extends Silnik {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Sudoku");
+        frame.setIconImage(new ImageIcon(Interfejs.class.getResource("/Sudoku/ikona.png")).getImage());
         frame.setMinimumSize(new Dimension(500, 675));
         frame.setContentPane(new Interfejs().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
