@@ -11,6 +11,7 @@ public class MyDrawingPanel extends JPanel {
     private int height=18;
     private String figura="kolo";
     private Color kolorek;
+    private Color temp;
     private int czysc1=0;
 
     @Override
@@ -23,7 +24,9 @@ public class MyDrawingPanel extends JPanel {
         if(figura=="kolo") {
             g.fillOval(x - 12, y - 9, width, height);
         } else if(figura=="kwadrat"){
-            g.drawRect(x,y,width,width);
+            g.fillRect(x,y,width,width);
+        } else if(figura=="prostokat"){
+            g.fillRect(x,y,width,height);
         }
     }
 
@@ -58,6 +61,14 @@ public class MyDrawingPanel extends JPanel {
     public void setRozmiar(double rozmiar){
         width+=rozmiar;
         height+=rozmiar;
+    }
 
+    public void gumka(int opcja){
+        if(opcja==1){
+            temp=kolorek;
+            kolorek=new Color(255,255,255);
+        } else if(opcja==0){
+            kolorek=temp;
+        }
     }
 }

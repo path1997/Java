@@ -2,10 +2,7 @@ package zajecia3;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 
 public class DrawingApp {
     private JButton DOWNButton;
@@ -18,6 +15,8 @@ public class DrawingApp {
     private JButton kwadratButton;
     private JButton rozmiar_button;
     private JButton rozmiarplus_button;
+    private JComboBox comboBox1;
+    private JCheckBox gumkaCheckBox;
 
 
     public DrawingApp() {
@@ -78,7 +77,7 @@ public class DrawingApp {
                 mp.czysc();
             }
         });
-        koloButton.addActionListener(new ActionListener() {
+        /*koloButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
@@ -94,7 +93,7 @@ public class DrawingApp {
                 mp.setFigura("kwadrat");
                 mp.repaint();
             }
-        });
+        });*/
         rozmiar_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -109,6 +108,37 @@ public class DrawingApp {
                 MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
                 mp.setRozmiar(5);
                 mp.repaint();
+            }
+        });
+        comboBox1.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                if(comboBox1.getSelectedItem().equals("Kwadrat")){
+                    mp.setFigura("kwadrat");
+                    mp.repaint();
+                }
+                if(comboBox1.getSelectedItem().equals("Koło")){
+                    mp.setFigura("kolo");
+                    mp.repaint();
+                }
+                if(comboBox1.getSelectedItem().equals("Prostokąt")){
+                    mp.setFigura("prostokat");
+                    mp.repaint();
+                }
+            }
+        });
+        gumkaCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                MyDrawingPanel mp=(MyDrawingPanel) drawingPanel;
+                if(e.getStateChange()==ItemEvent.SELECTED){
+                    mp.gumka(1);
+                    mp.repaint();
+                } else if(e.getStateChange()==ItemEvent.DESELECTED){
+                    mp.gumka(0);
+                    mp.repaint();
+                }
             }
         });
     }
