@@ -39,7 +39,7 @@ public class Silnik {
                         liczba--;
                     }
                     licznik1++;
-                    if (licznik1 > 30) {
+                    if (licznik1 > 10) {
                         licznik++;
                         od_nowa = true;
                         break;
