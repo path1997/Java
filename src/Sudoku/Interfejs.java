@@ -1,15 +1,10 @@
 package Sudoku;
 
-import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
-import java.awt.Toolkit;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,24 +118,29 @@ public class Interfejs extends Silnik {
         Color defaultColor = T1.getBackground();
         ilośćPustychMiejscTextField.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         Tytul.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+
         wczytaj_pola();
+
         losujButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 komunikat.setText("");
                 il_miejsc_wol= (int) il_miejsc.getValue();
-                if(il_miejsc_wol<1){
-                    komunikat.setText("Liczba miejsc musi być większa niż 0");
+
+                if(il_miejsc_wol<1 || il_miejsc_wol>81){
+                    komunikat.setText("Liczba miejsc musi być w przedziale 1-81");
                     il_miejsc_wol=stary_stan_puste;
                     il_miejsc.setValue(stary_stan_puste);
                     return;
                 }
+
                 miejsca_puste.clear();
                 uzupelnij_tablice();
                 wstaw_puste(il_miejsc_wol);
                 stary_stan_puste=il_miejsc_wol;
                 czy_losowano=true;
                 int i=0,j=0;
+
                 for(JTextField l : pola){
                     if(tablica[i][j]==-1){
                         l.setText("");
@@ -159,10 +159,12 @@ public class Interfejs extends Silnik {
                 }
             }
         });
+
         sprawdzButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 miejsca_zle.clear();
+
                 if(czy_losowano==true) {
                     int i = 0, j = 0,licznik=0;
                     String liczba_string;
@@ -177,7 +179,7 @@ public class Interfejs extends Silnik {
                             try{
                                 liczba_int=Integer.parseInt(liczba_string);
                                 if(liczba_int>9 ||liczba_int<1){
-                                    komunikat.setText("Wprowadzadź tylko liczby w przedziale 1-9");
+                                    komunikat.setText("Wprowadaj tylko liczby w przedziale 1-9");
                                     l.setEditable(true);
                                     puste_pola=true;
                                     tablica[i][j]=-1;
@@ -193,7 +195,7 @@ public class Interfejs extends Silnik {
                                 }
                                 puste_pola=false;
                             } catch (NumberFormatException r){
-                                komunikat.setText("Wprowadzadź tylko liczby w puste pola");
+                                komunikat.setText("Wprowadzaj tylko liczby w puste pola");
                                 l.setEditable(true);
                                 puste_pola=true;
                                 tablica[i][j]=-1;
@@ -209,7 +211,6 @@ public class Interfejs extends Silnik {
                             komunikat.setText("Brawo! Wygrałeś :)");
                             for(Integer p: miejsca_puste){
                                 pola.get(p).setBackground(new Color(0, 171,0));
-                                System.out.println(p);
                             }
                         } else {
                             odtworz_dzwiek("fail");
@@ -231,6 +232,7 @@ public class Interfejs extends Silnik {
                 }
             }
         });
+
         przykładowaPoprawnaOdpowiedźButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -249,6 +251,7 @@ public class Interfejs extends Silnik {
             }
         });
     }
+
     public void odtworz_dzwiek(String nazwa) {
         Thread dzwiek=new Thread(new Runnable() {
             public void run() {
@@ -278,9 +281,6 @@ public class Interfejs extends Silnik {
         pola.add(T65);pola.add(T66);pola.add(T67);pola.add(T68);pola.add(T69);pola.add(T70);pola.add(T71);pola.add(T72);
         pola.add(T73);pola.add(T74);pola.add(T75);pola.add(T76);pola.add(T77);pola.add(T78);pola.add(T79);pola.add(T80);
         pola.add(T81);
-
-    }
-    public void wynik_koncowy(){
 
     }
 

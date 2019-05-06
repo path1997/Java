@@ -9,6 +9,7 @@ public class Silnik {
     Random generator = new Random();
     List<Integer> miejsca_zle= new ArrayList<>();
     List<Integer> miejsca_puste=new ArrayList<>();
+
     public int[][] tablica = new int[9][9];
     public int[][] odpowiedz = new int[9][9];
 
@@ -38,7 +39,7 @@ public class Silnik {
                         liczba--;
                     }
                     licznik1++;
-                    if (licznik1 > 10) {
+                    if (licznik1 > 30) {
                         licznik++;
                         od_nowa = true;
                         break;
