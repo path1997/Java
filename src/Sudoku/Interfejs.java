@@ -31,41 +31,8 @@ public class Interfejs extends Silnik {
     public Interfejs() {
         ileWWierszuITextField.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         wielkosc.setValue(3);
-        pole_gry.setLayout(new GridLayout(rozmiar+(rozmiar/3)-1, rozmiar+(rozmiar/3)-1));
-        for(int i=1;i<=rozmiar+(rozmiar/3)-1;i++){
-            for(int j=1;j<=rozmiar+(rozmiar/3)-1;j++) {
-                if(j%4==0 && j!=0 && j!=rozmiar+(rozmiar/3)-1){
-                  JPanel jPanel=new JPanel();
-                  jPanel.setBackground(new Color(0,0,0));
-                  jPanel.setAlignmentY(Component.CENTER_ALIGNMENT);
-                  jPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-                  jPanel.setSize(new Dimension(2, -1));
-                  jPanel.setMaximumSize(new Dimension(2, -1));
-                  jPanel.setMinimumSize(new Dimension(2, -1));
-                  pole_gry.add(jPanel);
+        generuj_plansze();
 
-                } else if (i%4==0) {
-                    JPanel jPanel=new JPanel(new GridLayout(1,1));
-                    jPanel.setBackground(new Color(0,0,0));
-                    jPanel.setMaximumSize(new Dimension(5,5));
-                    pole_gry.add(jPanel);
-                }else {
-                    JTextField textField = new JTextField();
-                    textField.setHorizontalAlignment(SwingConstants.CENTER);
-                    textField.setAlignmentY(Component.CENTER_ALIGNMENT);
-                    textField.setAlignmentX(Component.CENTER_ALIGNMENT);
-                    textField.setSize(new Dimension(30, 30));
-                    textField.setMaximumSize(new Dimension(30, 30));
-                    textField.setMinimumSize(new Dimension(30, 30));
-                    textField.setEditable(false);
-                    pola.add(textField);
-                    pole_gry.add(textField);
-                }
-            }
-        }
-
-
-        Color defaultColor = Tytul.getBackground();
         ilośćPustychMiejscTextField.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         Tytul.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 
@@ -73,77 +40,27 @@ public class Interfejs extends Silnik {
         losujButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //ZABEZPIECZENIA---------
                 komunikat.setText("");
                 il_miejsc_wol= (int) il_miejsc.getValue();
-
-                if(il_miejsc_wol<1 || il_miejsc_wol>81){
-                    komunikat.setText("Liczba miejsc musi być w przedziale 1-81");
+                rozmiar= (int) wielkosc.getValue();
+                rozmiar_petla=rozmiar;
+                if(rozmiar<2 || rozmiar>3){
+                    komunikat.setText("Liczba okienek musi być w przedziale 2-3");
+                    il_miejsc.setValue(3);
+                    return;
+                }
+                rozmiar=rozmiar*rozmiar;
+                if(il_miejsc_wol<1 || il_miejsc_wol>rozmiar*rozmiar){
+                    komunikat.setText("Liczba miejsc musi być w przedziale 1-"+rozmiar*rozmiar);
                     il_miejsc_wol=stary_stan_puste;
                     il_miejsc.setValue(stary_stan_puste);
                     return;
                 }
-                pola.clear();
-                rozmiar= (int) wielkosc.getValue();
-                rozmiar=3*rozmiar;
-                pole_gry.removeAll();
-                pole_gry.setLayout(new GridLayout(rozmiar+(rozmiar/3)-1, rozmiar+(rozmiar/3)-1));
-                for(int i=1;i<=rozmiar+(rozmiar/3)-1;i++){
-                    for(int j=1;j<=rozmiar+(rozmiar/3)-1;j++) {
-                        if(j%4==0 && j!=0 && j!=rozmiar+(rozmiar/3)-1){
-                            JPanel jPanel=new JPanel();
-                            jPanel.setBackground(new Color(0,0,0));
-                            jPanel.setAlignmentY(Component.CENTER_ALIGNMENT);
-                            jPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-                            jPanel.setSize(new Dimension(2, -1));
-                            jPanel.setMaximumSize(new Dimension(2, -1));
-                            jPanel.setMinimumSize(new Dimension(2, -1));
-                            pole_gry.add(jPanel);
+                //--------------------------
+                generuj_plansze();
+                generuj_puste_miejsca();
 
-                        } else if (i%4==0) {
-                            JPanel jPanel=new JPanel(new GridLayout(1,1));
-                            jPanel.setBackground(new Color(0,0,0));
-                            jPanel.setMaximumSize(new Dimension(5,5));
-                            pole_gry.add(jPanel);
-                        }else {
-                            JTextField textField = new JTextField();
-                            textField.setHorizontalAlignment(SwingConstants.CENTER);
-                            textField.setAlignmentY(Component.CENTER_ALIGNMENT);
-                            textField.setAlignmentX(Component.CENTER_ALIGNMENT);
-                            textField.setSize(new Dimension(30, 30));
-                            textField.setMaximumSize(new Dimension(30, 30));
-                            textField.setMinimumSize(new Dimension(30, 30));
-                            textField.setEditable(false);
-                            pola.add(textField);
-                            pole_gry.add(textField);
-                        }
-                    }
-                }
-                pole_gry.revalidate();
-                pole_gry.repaint();
-
-                miejsca_puste.clear();
-                uzupelnij_tablice();
-                wstaw_puste(il_miejsc_wol);
-                stary_stan_puste=il_miejsc_wol;
-                czy_losowano=true;
-                int i=0,j=0;
-
-                for(JTextField l : pola){
-                    if(tablica[i][j]==-1){
-                        l.setText("");
-                        l.setEditable(true);
-                        l.setBackground(Color.white);
-                    }else {
-                        l.setText(Integer.toString(tablica[i][j]));
-                        l.setEditable(false);
-                        l.setBackground(defaultColor);
-                    }
-                    j++;
-                    if(j==rozmiar){
-                        j=0;
-                        i++;
-                    }
-                }
             }
         });
 
@@ -151,7 +68,7 @@ public class Interfejs extends Silnik {
             @Override
             public void actionPerformed(ActionEvent e) {
                 miejsca_zle.clear();
-
+                //ZABEZPIECZENIA
                 if(czy_losowano==true) {
                     int i = 0, j = 0,licznik=0;
                     String liczba_string;
@@ -173,6 +90,8 @@ public class Interfejs extends Silnik {
                                     l.setText("");
                                     break;
                                 }
+                //----------------------------------------
+                                //WPISYWANIE DO TABLICY
                                 tablica[i][j] = liczba_int;
                                 l.setEditable(false);
                                 j++;
@@ -181,6 +100,8 @@ public class Interfejs extends Silnik {
                                     i++;
                                 }
                                 puste_pola=false;
+                                //----------------------
+                                //ZABEZPIECZENIE PRZED LITERAMI
                             } catch (NumberFormatException r){
                                 komunikat.setText("Wprowadzaj tylko liczby w puste pola");
                                 l.setEditable(true);
@@ -189,33 +110,11 @@ public class Interfejs extends Silnik {
                                 l.setText("");
                                 break;
                             }
+                            //--------------------------------------
                         }
                     }
+                    sprawdz_wygrana();
 
-                    if(puste_pola==false) {
-                        if (sprawdz_wynik() == true) {
-                            odtworz_dzwiek("success");
-                            komunikat.setText("Brawo! Wygrałeś :)");
-                            for(Integer p: miejsca_puste){
-                                pola.get(p).setBackground(new Color(0, 171,0));
-                            }
-                        } else {
-                            odtworz_dzwiek("fail");
-                            komunikat.setText("Niestety przegrałeś :(");
-                            for(Integer p: miejsca_puste){
-                                for(Integer z: miejsca_zle) {
-                                    if(z==p){
-                                        pola.get(z).setBackground(new Color(255,0,0));
-                                        break;
-                                    }
-                                    else{
-                                        pola.get(p).setBackground(new Color(0,171,0));
-                                    }
-                                }
-                            }
-
-                        }
-                    }
                 }
             }
         });
@@ -239,6 +138,98 @@ public class Interfejs extends Silnik {
         });
     }
 
+    public void generuj_plansze(){
+        pola.clear();
+        pole_gry.removeAll();
+        pole_gry.setLayout(new GridLayout((rozmiar+(rozmiar_petla-1)), (rozmiar+(rozmiar_petla-1))));
+        for(int i=1;i<=(rozmiar+(rozmiar_petla-1));i++){
+            for(int j=1;j<=(rozmiar+(rozmiar_petla-1));j++) {
+                if(j%(rozmiar_petla+1)==0 && j!=0 && j!=(rozmiar+(rozmiar_petla-1))){
+                    JPanel jPanel=new JPanel();
+                    jPanel.setBackground(new Color(0,0,0));
+                    jPanel.setAlignmentY(Component.CENTER_ALIGNMENT);
+                    jPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    jPanel.setSize(new Dimension(2, -1));
+                    jPanel.setMaximumSize(new Dimension(2, -1));
+                    jPanel.setMinimumSize(new Dimension(2, -1));
+                    pole_gry.add(jPanel);
+
+                } else if (i%(rozmiar_petla+1)==0) {
+                    JPanel jPanel=new JPanel(new GridLayout(1,1));
+                    jPanel.setBackground(new Color(0,0,0));
+                    jPanel.setMaximumSize(new Dimension(5,5));
+                    pole_gry.add(jPanel);
+                }else {
+                    JTextField textField = new JTextField();
+                    textField.setHorizontalAlignment(SwingConstants.CENTER);
+                    textField.setAlignmentY(Component.CENTER_ALIGNMENT);
+                    textField.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    textField.setSize(new Dimension(30, 30));
+                    textField.setMaximumSize(new Dimension(30, 30));
+                    textField.setMinimumSize(new Dimension(30, 30));
+                    textField.setEditable(false);
+                    pola.add(textField);
+                    pole_gry.add(textField);
+                }
+            }
+        }
+        pole_gry.revalidate();
+        pole_gry.repaint();
+    }
+
+    public void generuj_puste_miejsca(){
+        miejsca_puste.clear();
+        uzupelnij_tablice();
+        wstaw_puste(il_miejsc_wol);
+        stary_stan_puste=il_miejsc_wol;
+        czy_losowano=true;
+        int i=0,j=0;
+
+        for(JTextField l : pola){
+            if(tablica[i][j]==-1){
+                l.setText("");
+                l.setEditable(true);
+                l.setBackground(Color.white);
+            }else {
+                l.setText(Integer.toString(tablica[i][j]));
+                l.setEditable(false);
+                l.setBackground(Tytul.getBackground());
+            }
+            j++;
+            if(j==rozmiar){
+                j=0;
+                i++;
+            }
+        }
+    }
+
+    public void sprawdz_wygrana(){
+        if(puste_pola==false) {
+            if (sprawdz_wynik() == true) {
+                odtworz_dzwiek("success");
+                komunikat.setText("Brawo! Wygrałeś :)");
+                for(Integer p: miejsca_puste){
+                    pola.get(p).setBackground(new Color(0, 171,0));
+                }
+            } else {
+                odtworz_dzwiek("fail");
+                komunikat.setText("Niestety przegrałeś :(");
+                for(Integer p: miejsca_puste){
+                    for(Integer z: miejsca_zle) {
+                        if(z==p){
+                            pola.get(z).setBackground(new Color(255,0,0));
+                            break;
+                        }
+                        else{
+                            pola.get(p).setBackground(new Color(0,171,0));
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
     public void odtworz_dzwiek(String nazwa) {
         Thread dzwiek=new Thread(new Runnable() {
             public void run() {
@@ -260,7 +251,7 @@ public class Interfejs extends Silnik {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Sudoku");
         frame.setIconImage(new ImageIcon(Interfejs.class.getResource("/Sudoku/ikona.png")).getImage());
-        frame.setMinimumSize(new Dimension(500, 675));
+        frame.setMinimumSize(new Dimension(500, 680));
         frame.setContentPane(new Interfejs().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();

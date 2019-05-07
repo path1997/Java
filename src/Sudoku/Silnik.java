@@ -6,10 +6,12 @@ import java.util.Random;
 
 public class Silnik {
     public int rozmiar=9;
+    public int rozmiar_petla=3;
 
     Random generator = new Random();
     List<Integer> miejsca_zle= new ArrayList<>();
     List<Integer> miejsca_puste=new ArrayList<>();
+
     public int[][] tablica;
     public int[][] odpowiedz;
 
@@ -26,7 +28,6 @@ public class Silnik {
             }
         }
         for (int i = 0; i < rozmiar; i++) {
-            licznik = 0;
             for (int j = 0; j < rozmiar; j++) {
                 licznik1 = 0;
                 liczba = (generator.nextInt(rozmiar))+1;
@@ -34,7 +35,8 @@ public class Silnik {
                     stan = czy_mozna_wstawic(i, j, liczba);
                     if (stan == true) {
                         tablica[i][j] = liczba;
-                    } else if (liczba == 1) {
+                    }
+                    if (liczba == 1) {
                         liczba = rozmiar;
                     }
                     else {
@@ -42,7 +44,6 @@ public class Silnik {
                     }
                     licznik1++;
                     if (licznik1 > rozmiar+1) {
-                        licznik++;
                         od_nowa = true;
                         break;
                     }
@@ -55,7 +56,7 @@ public class Silnik {
                 break;
             }
         }
-        if (licznik == 1) {
+        if (od_nowa == true) {
             uzupelnij_tablice();
             return;
         }
@@ -83,33 +84,26 @@ public class Silnik {
         int kwadratStartW = 0;
         int kwadratStartK = 0;
 
-        /*if (x <= 2) {
-            kwadratStartW = 0;
-        } else {
-            for(int b=3;b<=rozmiar-3;b=b+3){
-                if(x>=b && x<=b*2-1){
-                    kwadratStartW=b;
-                    break;
-                }
+        for(int t=0;t<rozmiar_petla;t++){
+            if((t*rozmiar_petla)<=x && ((t*rozmiar_petla)+rozmiar_petla)>x){
+                kwadratStartW=(t*rozmiar_petla);
+                break;
             }
         }
-        if (y <= 2) {
-            kwadratStartK = 0;
-        } else {
-            for(int b=3;b<=rozmiar-3;b=b+3){
-                if(y>=b && y<=b*2-1){
-                    kwadratStartK=b;
-                    break;
-                }
+
+        for(int t=0;t<rozmiar_petla;t++){
+            if((t*rozmiar_petla)<=y && ((t*rozmiar_petla)+rozmiar_petla)>y){
+                kwadratStartK=(t*rozmiar_petla);
+                break;
             }
         }
-        for (int k = kwadratStartW; k <= kwadratStartW + 2; k++) {
-            for (int l = kwadratStartK; l <= kwadratStartK + 2; l++) {
+        for (int k = kwadratStartW; k < (kwadratStartW + rozmiar_petla); k++) {
+            for (int l = kwadratStartK; l < (kwadratStartK + rozmiar_petla); l++) {
                 if (tablica[k][l] == liczba && k != x && l != y) {
                     licznik++;
                 }
             }
-        }*/
+        }
 
         if (licznik == 0) {
             return true;
