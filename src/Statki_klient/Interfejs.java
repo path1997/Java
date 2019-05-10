@@ -4,21 +4,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Interfejs extends Silnik{
+    public BufferedReader in;
+    public PrintWriter out;
     private JPanel mainPanel;
     private JTextField STATKITextField;
     private JRadioButton BtC;
     private JRadioButton btZ;
     private JRadioButton btN;
-    private JTextField textC;
+    public  JTextField textC;
     private JTextField textZ;
     private JTextField textN;
     private JTextField textField4;
@@ -28,21 +29,43 @@ public class Interfejs extends Silnik{
     private JPanel statki_przeciwnika;
     private JButton startButton;
     private JPanel linia;
+    public Socket socket;
     private JTextField statkiGraczaTextField;
     private JTextField statkiPrzeciwnikaTextField;
     public int kolor=1;
-    BufferedReader in;
-    PrintWriter out;
-    JFrame frame = new JFrame("Statki");
+    public JFrame frame = new JFrame("Statki");
     public String nazwa_gracza;
+    public String adres_serwera;
+    int dlugosc_nazwy_gracza;
+    int strzal;
+    String id;
+    //JTextField textField = new JTextField(40);
+    //JTextArea messageArea = new JTextArea(8, 40);
 
 
-    public Interfejs() throws IOException {
+    public void polacz_z_serwerem() throws IOException {
+        socket = new Socket(adres_serwera, 9001);
+        in = new BufferedReader(new InputStreamReader(
+                socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
+        //System.out.println("test");
+    }
+    public Interfejs() {
         generuj_plansze();
 
+        //textField.setEditable(false);
+        // messageArea.setEditable(false);
+        //frame.getContentPane().add(textField, "North");
+        // frame.getContentPane().add(new JScrollPane(messageArea), "Center");
+        // frame.pack();
 
+        /*textField.addActionListener(new ActionListener() {
 
-
+            public void actionPerformed(ActionEvent e) {
+                out.println(textField.getText());
+                textField.setText("");
+            }
+        });*/
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -50,9 +73,13 @@ public class Interfejs extends Silnik{
                     for (JButton l : przyciski_gracza) {
                         l.setEnabled(false);
                     }
-                    for (JButton m : przyciski_przeciwnika) {
-                        m.setEnabled(true);
+                    out.println(nazwa_gracza);
+                    for(int i=0;i<rozmiar;i++) {
+                        for (int j = 0; j < rozmiar; j++) {
+                            out.println(pola_gracza[i][j]);
+                        }
                     }
+                    out.println("start");
                 }
             }
         });
@@ -74,62 +101,88 @@ public class Interfejs extends Silnik{
                 kolor=3;
             }
         });
+
     }
-    private String pobierz_nazwe_gracza() {
+    private String getServerAddress() {
         return JOptionPane.showInputDialog(
                 frame,
-                "Wprowadź nazwę gracza",
-                "Gra Statki",
+                "Enter IP Address of the Server:",
+                "Welcome to the Chatter",
                 JOptionPane.QUESTION_MESSAGE);
+    }
+    private String getName() {
+        return JOptionPane.showInputDialog(
+                frame,
+                "Choose a screen name:",
+                "Screen name selection",
+                JOptionPane.PLAIN_MESSAGE);
     }
 
-    private String pobierz_adres_serwera() {
-        return JOptionPane.showInputDialog(
-                frame,
-                "Wpisz adres IP serwera",
-                "Gra Statki",
-                JOptionPane.QUESTION_MESSAGE);
-    }
 
     private void run() throws IOException {
-        String serverAddress = pobierz_adres_serwera();
-        Socket socket = new Socket(serverAddress, 9001);
-        in = new BufferedReader(new InputStreamReader(
-                socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream(), true);
-        nazwa_gracza=pobierz_nazwe_gracza();
-        int dlugosc_nazwy_gracza=nazwa_gracza.length();
-        statkiGraczaTextField.setText(nazwa_gracza);
-        out.println(nazwa_gracza);
 
         while (true) {
+            int index1,wartosc;
             String line = in.readLine();
             System.out.println(line);
             if (line.startsWith("name?")) {
                 out.println(nazwa_gracza);
             } else if (line.startsWith("accepted")) {
-                System.out.println("sukces");
-            } else if(line.startsWith("go")){
-                System.out.println("jazda");
-            } else if (line.startsWith(nazwa_gracza)) {
-                /*int i=dlugosc_nazwy_gracza;
-                String liczba="";
-                char litera=line.charAt(i);
-                liczba+=litera;
-                i++;
-                while(true){
-                   litera= line.charAt(i);
-                   if(litera=='\n'){
-                       break;
-                   } else {
-                       liczba+=litera;
-                       i++;
-                   }
-                }*/
-                System.out.println(line.substring(dlugosc_nazwy_gracza));
+                System.out.println("ok");
+            } else if (line.startsWith("message")) {
+                System.out.println(line);
+            } else if(line.startsWith(nazwa_gracza)){
+                if(line.equals(nazwa_gracza+"1")){
+                    for (JButton m : przyciski_przeciwnika) {
+                        m.setEnabled(true);
+                    }
+                } else if(line.startsWith(nazwa_gracza+" w ")){
+                    /*for (JButton m : przyciski_przeciwnika) {
+                        m.setEnabled(true);
+                    }
+                    System.out.println(line);
+
+                    line = in.readLine();
+                    wartosc=Integer.parseInt(line.substring(dlugosc_nazwy_gracza+1));*/
+                    wartosc=Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3));
+                    if(wartosc==1){
+                        przyciski_przeciwnika.get(strzal).setBackground(new Color(255,0,0));
+                    } else if(wartosc==2){
+                        przyciski_przeciwnika.get(strzal).setBackground(new Color(0,255,0));
+                    } else if(wartosc==3){
+                        przyciski_przeciwnika.get(strzal).setBackground(new Color(0,0,255));
+                    }
+
+                } else if(line.startsWith(nazwa_gracza+" b ")){
+                    przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setBackground(new Color(0,0,0));
+                    for (JButton m : przyciski_przeciwnika) {
+                        m.setEnabled(true);
+                    }
+                    for (JButton n : przyciski_uzyte) {
+                        n.setEnabled(false);
+                    }
+                }
+                else if(line.startsWith(nazwa_gracza+" i ")){
+                    przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setText("X");
+                    for (JButton m : przyciski_przeciwnika) {
+                        m.setEnabled(true);
+                    }
+                    for (JButton n : przyciski_uzyte) {
+                        n.setEnabled(false);
+                    }
+                }
+//Integer.parseInt(line.substring(5))==null
+            }
+            else if(line.startsWith("wygral")){
+                if(line.substring(7).equals(nazwa_gracza)){
+                    JOptionPane.showMessageDialog(frame, "Brawo! Wygrałeś :)");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Niestety przegrales :/");
+                }
             }
         }
     }
+
 
     public void generuj_plansze(){
         statki_gracza.removeAll();
@@ -164,7 +217,23 @@ public class Interfejs extends Silnik{
                 button.setEnabled(false);
                 przyciski_przeciwnika.add(button);
                 statki_przeciwnika.add(button);
-                button.addActionListener(new Przeciwnik_listener());
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JButton b = (JButton) e.getSource();
+                        int index;
+                        for (index = 0; index<przyciski_przeciwnika.size(); index++){
+                            if(przyciski_przeciwnika.get(index)==b) break;
+                        }
+                        przyciski_uzyte.add(b);
+                        for (JButton m : przyciski_przeciwnika) {
+                            m.setEnabled(false);
+                        }
+                        out.println(nazwa_gracza+" "+index);
+                        System.out.println(nazwa_gracza+" "+index);
+                        strzal=index;
+                    }
+                });
             }
         }
         linia.setBackground(new Color(0,0,0));
@@ -231,27 +300,18 @@ public class Interfejs extends Silnik{
         }
     }
 
-    private class Przeciwnik_listener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JButton b = (JButton) e.getSource();
-            int index;
-            for (index = 0; index<przyciski_przeciwnika.size(); index++){
-                if(przyciski_przeciwnika.get(index)==b) break;
-            }
-            //Integer.toString(index)
-            out.println(Integer.toString(index));
-            //System.out.println(index);
-        }
-    }
 
     public static void main(String[] args) throws IOException {
-        Interfejs i = new Interfejs();
-        i.frame.setContentPane(new Interfejs().mainPanel);
-        i.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        i.frame.pack();
-        i.frame.setVisible(true);
-        i.run();
+        Interfejs interfejs = new Interfejs();
+        interfejs.adres_serwera=interfejs.getServerAddress();
+        interfejs.nazwa_gracza=interfejs.getName();
+        interfejs.dlugosc_nazwy_gracza=interfejs.nazwa_gracza.length();
+        interfejs.polacz_z_serwerem();
+        interfejs.frame.setContentPane(interfejs.mainPanel);
+        interfejs.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        interfejs.frame.setVisible(true);
+        interfejs.frame.pack();
+        interfejs.run();
 
     }
 }
