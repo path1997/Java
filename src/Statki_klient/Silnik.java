@@ -12,18 +12,22 @@ public class Silnik {
     List<JButton> przyciski_uzyte=new ArrayList<>();
     public int[][] temp=new int[rozmiar][rozmiar];
     public int[][] pola_gracza=new int[rozmiar][rozmiar];
-    public int il_c=3;
-    public int il_z=2;
-    public int il_n=1;
-    public int il_c2=il_c;
-    public int il_z2=il_z;
-    public int il_n2=il_n;
+    public int ilosc_statkow_czerwonych=1;
+    public int ilosc_statkow_zielonych=1;
+    public int ilosc_statkow_niebieskich=1;
 
+
+    public int il_c;
+    public int il_z;
+    public int il_n;
+    public int il_c2;
+    public int il_z2;
+    public int il_n2;
 
     void wyczysc_tablice(){
         for(int i=0;i<rozmiar;i++){
             for(int j=0;j<rozmiar;j++){
-                pola_gracza[rozmiar][rozmiar]=0;
+                pola_gracza[i][j]=0;
             }
         }
     }

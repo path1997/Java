@@ -15,16 +15,14 @@ public class Interfejs extends Silnik{
     public BufferedReader in;
     public PrintWriter out;
     private JPanel mainPanel;
-    private JTextField STATKITextField;
+    private JTextField graWStatkiTextField;
     private JRadioButton BtC;
     private JRadioButton btZ;
     private JRadioButton btN;
     public  JTextField textC;
     private JTextField textZ;
     private JTextField textN;
-    private JTextField textField4;
-    private JTextField textField5;
-    private JTextField textField6;
+    private JTextField komunikaty;
     private JPanel statki_gracza;
     private JPanel statki_przeciwnika;
     private JButton startButton;
@@ -32,12 +30,14 @@ public class Interfejs extends Silnik{
     public Socket socket;
     private JTextField statkiGraczaTextField;
     private JTextField statkiPrzeciwnikaTextField;
+    private JButton nowaGraButton;
     public int kolor=1;
     public JFrame frame = new JFrame("Statki");
     public String nazwa_gracza;
     public String adres_serwera;
     int dlugosc_nazwy_gracza;
     int strzal;
+    public int licznik3;
     String id;
     //JTextField textField = new JTextField(40);
     //JTextArea messageArea = new JTextArea(8, 40);
@@ -51,8 +51,8 @@ public class Interfejs extends Silnik{
         //System.out.println("test");
     }
     public Interfejs() {
-        generuj_plansze();
 
+        generuj_plansze();
         //textField.setEditable(false);
         // messageArea.setEditable(false);
         //frame.getContentPane().add(textField, "North");
@@ -79,7 +79,11 @@ public class Interfejs extends Silnik{
                             out.println(pola_gracza[i][j]);
                         }
                     }
-                    out.println("start");
+                    startButton.setEnabled(false);
+                    komunikaty.setText("Oczekiwanie na przeciwnika");
+
+                } else {
+                    komunikaty.setText("Zle ustawione statki. Można ustawiać pionowo lub poziomo");
                 }
             }
         });
@@ -102,19 +106,26 @@ public class Interfejs extends Silnik{
             }
         });
 
+        nowaGraButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                out.println("nowa gra");
+                nowaGraButton.setEnabled(false);
+            }
+        });
     }
     private String getServerAddress() {
         return JOptionPane.showInputDialog(
                 frame,
-                "Enter IP Address of the Server:",
-                "Welcome to the Chatter",
+                "Wprowadź adres IP:",
+                "Statki",
                 JOptionPane.QUESTION_MESSAGE);
     }
     private String getName() {
         return JOptionPane.showInputDialog(
                 frame,
-                "Choose a screen name:",
-                "Screen name selection",
+                "Wprowadź swoją nazwę:",
+                "Statki",
                 JOptionPane.PLAIN_MESSAGE);
     }
 
@@ -124,17 +135,16 @@ public class Interfejs extends Silnik{
         while (true) {
             int index1,wartosc;
             String line = in.readLine();
-            System.out.println(line);
+            //System.out.println(line);
             if (line.startsWith("name?")) {
                 out.println(nazwa_gracza);
             } else if (line.startsWith("accepted")) {
-                System.out.println("ok");
-            } else if (line.startsWith("message")) {
-                System.out.println(line);
+                komunikaty.setText("Połaczono z serwerem! Ustaw statki, a następnie kliknij Start");
             } else if(line.startsWith(nazwa_gracza)){
                 if(line.equals(nazwa_gracza+"1")){
                     for (JButton m : przyciski_przeciwnika) {
                         m.setEnabled(true);
+                        komunikaty.setText("Twoja kolej");
                     }
                 } else if(line.startsWith(nazwa_gracza+" w ")){
                     /*for (JButton m : przyciski_przeciwnika) {
@@ -156,6 +166,7 @@ public class Interfejs extends Silnik{
                 } else if(line.startsWith(nazwa_gracza+" b ")){
                     przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setBackground(new Color(0,0,0));
                     for (JButton m : przyciski_przeciwnika) {
+                        komunikaty.setText("Twoja kolej");
                         m.setEnabled(true);
                     }
                     for (JButton n : przyciski_uzyte) {
@@ -163,7 +174,7 @@ public class Interfejs extends Silnik{
                     }
                 }
                 else if(line.startsWith(nazwa_gracza+" i ")){
-                    przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setText("X");
+                    przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setBackground(new Color(75, 75, 75));
                     for (JButton m : przyciski_przeciwnika) {
                         m.setEnabled(true);
                     }
@@ -176,8 +187,21 @@ public class Interfejs extends Silnik{
             else if(line.startsWith("wygral")){
                 if(line.substring(7).equals(nazwa_gracza)){
                     JOptionPane.showMessageDialog(frame, "Brawo! Wygrałeś :)");
+                    komunikaty.setText("Brawo! Wygrałeś :)");
                 } else {
                     JOptionPane.showMessageDialog(frame, "Niestety przegrales :/");
+                    komunikaty.setText("Niestety przegrales :/");
+                }
+                nowaGraButton.setEnabled(true);
+            } else if(line.startsWith("nowa gra")){
+                wyczysc_tablice();
+                generuj_plansze();
+                out.println("nowagraok");
+
+            } else{
+                if(licznik3==0) {
+                    statkiPrzeciwnikaTextField.setText(line);
+                    licznik3++;
                 }
             }
         }
@@ -185,8 +209,23 @@ public class Interfejs extends Silnik{
 
 
     public void generuj_plansze(){
+        licznik3=0;
+        startButton.setEnabled(true);
         statki_gracza.removeAll();
+        statki_przeciwnika.removeAll();
+        przyciski_przeciwnika.clear();
+        przyciski_uzyte.clear();
+        przyciski_gracza.clear();
         statki_gracza.setLayout(new GridLayout(rozmiar, rozmiar));
+        il_c=3*ilosc_statkow_czerwonych;
+        il_z=2*ilosc_statkow_zielonych;
+        il_n=1*ilosc_statkow_niebieskich;
+        il_c2=il_c;
+        il_z2=il_z;
+        il_n2=il_n;
+        textC.setText("Dlugosc statku:3   Ilosc wolnych statków: "+il_c/3);
+        textZ.setText("Dlugosc statku:2   Ilosc wolnych statków: "+il_z/2);
+        textN.setText("Dlugosc statku:1   Ilosc wolnych statków: "+il_n);
         for(int i=0;i<rozmiar;i++) {
             for (int j = 0; j < rozmiar; j++) {
                 JButton button = new JButton();
@@ -230,8 +269,9 @@ public class Interfejs extends Silnik{
                             m.setEnabled(false);
                         }
                         out.println(nazwa_gracza+" "+index);
-                        System.out.println(nazwa_gracza+" "+index);
+                        //System.out.println(nazwa_gracza+" "+index);
                         strzal=index;
+                        komunikaty.setText("Oczekiwanie na przeciwnika");
                     }
                 });
             }
@@ -297,6 +337,9 @@ public class Interfejs extends Silnik{
                 pola_gracza[row][col]=kolor;
                 il_n--;
             }
+            textC.setText("Dlugosc statku:3   Ilosc wolnych statków: "+(il_c+2)/3);
+            textZ.setText("Dlugosc statku:2   Ilosc wolnych statków: "+(il_z+1)/2);
+            textN.setText("Dlugosc statku:1   Ilosc wolnych statków: "+il_n);
         }
     }
 
@@ -305,6 +348,7 @@ public class Interfejs extends Silnik{
         Interfejs interfejs = new Interfejs();
         interfejs.adres_serwera=interfejs.getServerAddress();
         interfejs.nazwa_gracza=interfejs.getName();
+        interfejs.statkiGraczaTextField.setText(interfejs.nazwa_gracza);
         interfejs.dlugosc_nazwy_gracza=interfejs.nazwa_gracza.length();
         interfejs.polacz_z_serwerem();
         interfejs.frame.setContentPane(interfejs.mainPanel);
