@@ -154,7 +154,7 @@ public class Interfejs extends Silnik{
         while (true) {
             int index1,wartosc;
             String line = in.readLine();
-            //System.out.println(line);
+            System.out.println(line);
             if (line.startsWith("name?")) {
                 out.println(nazwa_gracza);
             } else if (line.startsWith("accepted")) {

@@ -33,8 +33,8 @@ public class Serwer {
     }
 
     private static class Handler extends Thread {
-        static public int[] tablica1=new int[100];
-        static public int[] tablica2=new int[100];
+        static public int[][] tablica1=new int[100][100];
+        //static public int[] tablica2=new int[100];
 
         private String name;
         private Socket socket;
@@ -66,15 +66,16 @@ public class Serwer {
                         }
                     }
                 }
-
-
+                int pozycja;
+                pozycja=names.size()-1;
+                System.out.println(pozycja);
                 out.println("accepted");
                 while(true) {
                     //System.out.println("poczatek petli");
                     int licznik = 0;
                     String input = in.readLine();
                     //System.out.println(input);
-                    if (input.equals(names.get(0))) {
+                    if (input.equals(names.get(pozycja))) {
                         //System.out.println("elo");
                         while (true) {
                             input = in.readLine();
@@ -82,26 +83,7 @@ public class Serwer {
                                 return;
                             } else {
 
-                                tablica1[licznik] = Integer.parseInt(input);
-                                //out.println(input);
-                                //System.out.println(input);
-                                licznik++;
-                            }
-                            if (licznik == (rozmiar * rozmiar)) {
-                                licznik = 0;
-                                //odblokowanie_planszy++;
-                                break;
-                            }
-                        }
-                    } else if (input.equals(names.get(1))) {
-                        while (true) {
-                            //System.out.println("elo1");
-                            input = in.readLine();
-                            if (input == null) {
-                                return;
-                            } else {
-
-                                tablica2[licznik] = Integer.parseInt(input);
+                                tablica1[pozycja][licznik] = Integer.parseInt(input);
                                 //out.println(input);
                                 //System.out.println(input);
                                 licznik++;
@@ -113,12 +95,12 @@ public class Serwer {
                             }
                         }
                     }
-                /*for(int i=0;i<(rozmiar*rozmiar);i++){
-                    System.out.print(tablica1[i]);
+                /*for(int i=0;i<7;i++){
+                    System.out.print(tablica1[0][i]);
                 }
                 System.out.println("");
                 for(int i=0;i<7;i++){
-                    System.out.print(tablica2[i]);
+                    System.out.print(tablica1[1][i]);
                 }*/
                     //System.out.println("jestem");
                     //System.out.println(names.get(0) + " " + names.get(1));
@@ -129,15 +111,25 @@ public class Serwer {
                         /*while (true) {
                             //System.out.println("jestem");
                             if (odblokowanie_planszy == 2) {*/
-                        if (odblokowanie_planszy.size() == 2) {
+                        if (odblokowanie_planszy.size() % 2==0) {
                             for (PrintWriter writer : writers) {
-                                writer.println(names.get(0));
-                                writer.println(names.get(1));
+                                if(pozycja%2==0) {
+                                    writer.println(names.get(pozycja));
+                                    writer.println(names.get(pozycja + 1));
+                                } else {
+                                    writer.println(names.get(pozycja));
+                                    writer.println(names.get(pozycja -1));
+                                }
                             }
                             for (PrintWriter writer : writers) {
-                                writer.println(names.get(0) + "1");
+                                if(pozycja%2==1) {
+                                    writer.println(names.get(pozycja-1) + "1");
+                                } else {
+                                    writer.println(names.get(pozycja) + "1");
+                                }
                             }
                         }
+
                     }
 
                     while (true) {
@@ -145,71 +137,74 @@ public class Serwer {
                         int index, wartosc;
                         input = in.readLine();
                         //System.out.println(input);
-                        if (input.startsWith(names.get(0))) {
-                            index = Integer.parseInt(input.substring(names.get(0).length() + 1));
-                            wartosc = tablica2[index];
-                            tablica2[index] = 0;
+                        if(pozycja%2==0){
+                        if (input.startsWith(names.get(pozycja))) {
+                            index = Integer.parseInt(input.substring(names.get(pozycja).length() + 1));
+                            wartosc = tablica1[pozycja+1][index];
+                            tablica1[pozycja+1][index] = 0;
                             int licznik1 = 0;
                             for (int i = 0; i < (rozmiar * rozmiar); i++) {
-                                if (tablica2[i] != 0) {
+                                if (tablica1[pozycja+1][i] != 0) {
                                     licznik1++;
                                     break;
                                 }
                             }
                             if (licznik1 == 0) {
                                 for (PrintWriter writer : writers) {
-                                    writer.println("wygral " + names.get(0));
+                                    writer.println("wygral " + names.get(pozycja));
                                 }
                             } else {
                                 for (PrintWriter writer : writers) {
                                     if (wartosc == 0) {
-                                        writer.println(names.get(1) + " i " + index);
+                                        writer.println(names.get(pozycja+1) + " i " + index);
                                     } else {
-                                        writer.println(names.get(1) + " b " + index);
+                                        writer.println(names.get(pozycja+1) + " b " + index);
                                     }
 
-                                    writer.println(names.get(0) + " w " + wartosc);
+                                    writer.println(names.get(pozycja) + " w " + wartosc);
                                 }
                             }
                             //System.out.println(names.get(1)+" "+index+" "+wartosc);
+                        }
 
-
-                        } else if (input.startsWith(names.get(1))) {
-                            //System.out.println("test");
-                            index = Integer.parseInt(input.substring(names.get(1).length() + 1));
-                            wartosc = tablica1[index];
-                            tablica1[index] = 0;
-                            //System.out.println(names.get(0)+" "+index+" "+wartosc);
-                            int licznik1 = 0;
-                            for (int i = 0; i < (rozmiar * rozmiar); i++) {
-                                if (tablica1[i] != 0) {
-                                    licznik1++;
-                                    break;
-                                }
-                            }
-                            if (licznik1 == 0) {
-                                for (PrintWriter writer : writers) {
-                                    writer.println("wygral " + names.get(1));
-                                }
-                            } else {
-                                for (PrintWriter writer : writers) {
-                                    if (wartosc == 0) {
-                                        writer.println(names.get(0) + " i " + index);
-                                    } else {
-                                        writer.println(names.get(0) + " b " + index);
+                        } if(pozycja%2==1){
+                            if (input.startsWith(names.get(pozycja))) {
+                                //System.out.println("test");
+                                index = Integer.parseInt(input.substring(names.get(1).length() + 1));
+                                wartosc = tablica1[pozycja-1][index];
+                                tablica1[pozycja-1][index] = 0;
+                                //System.out.println(names.get(0)+" "+index+" "+wartosc);
+                                int licznik1 = 0;
+                                for (int i = 0; i < (rozmiar * rozmiar); i++) {
+                                    if (tablica1[pozycja-1][i] != 0) {
+                                        licznik1++;
+                                        break;
                                     }
-                                    writer.println(names.get(1) + " w " + wartosc);
                                 }
+                                if (licznik1 == 0) {
+                                    for (PrintWriter writer : writers) {
+                                        writer.println("wygral " + names.get(pozycja));
+                                    }
+                                } else {
+                                    for (PrintWriter writer : writers) {
+                                        if (wartosc == 0) {
+                                            writer.println(names.get(pozycja-1) + " i " + index);
+                                        } else {
+                                            writer.println(names.get(pozycja-1) + " b " + index);
+                                        }
+                                        writer.println(names.get(pozycja) + " w " + wartosc);
+                                    }
+                                }
+                            } else if (input.startsWith("nowa gra")) {
+                                for (PrintWriter writer : writers) {
+                                    writer.println("nowa gra");
+                                }
+                            } else if(input.startsWith("nowagraok")){
+                                odblokowanie_planszy.clear();
+                                writers.clear();
+                                //System.out.println("nowa gra ok");
+                                break;
                             }
-                        } else if (input.startsWith("nowa gra")) {
-                            for (PrintWriter writer : writers) {
-                                writer.println("nowa gra");
-                            }
-                        } else if(input.startsWith("nowagraok")){
-                            odblokowanie_planszy.clear();
-                            writers.clear();
-                            //System.out.println("nowa gra ok");
-                            break;
                         }
                     /*for (PrintWriter writer : writers) {
                         writer.println(names.get(0));
