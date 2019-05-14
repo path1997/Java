@@ -1,5 +1,8 @@
 package Statki_klient;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -42,6 +45,22 @@ public class Interfejs extends Silnik{
     //JTextField textField = new JTextField(40);
     //JTextArea messageArea = new JTextArea(8, 40);
 
+    public void odtworz_dzwiek(String nazwa) {
+        Thread dzwiek=new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Clip clip = AudioSystem.getClip();
+                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+                            Sudoku.Interfejs.class.getResource("/Statki_klient/"+nazwa+".wav"));
+                    clip.open(inputStream);
+                    clip.start();
+                } catch (Exception e) {
+                    System.err.println("zla sciezka");
+                }
+            }
+        });
+        dzwiek.start();
+    }
 
     public void polacz_z_serwerem() throws IOException {
         socket = new Socket(adres_serwera, 9001);
@@ -162,6 +181,7 @@ public class Interfejs extends Silnik{
                     } else if(wartosc==3){
                         przyciski_przeciwnika.get(strzal).setBackground(new Color(0,0,255));
                     }
+                    //odtworz_dzwiek("kill");
 
                 } else if(line.startsWith(nazwa_gracza+" b ")){
                     przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setBackground(new Color(0,0,0));
@@ -172,6 +192,7 @@ public class Interfejs extends Silnik{
                     for (JButton n : przyciski_uzyte) {
                         n.setEnabled(false);
                     }
+                    //odtworz_dzwiek("kill");
                 }
                 else if(line.startsWith(nazwa_gracza+" i ")){
                     przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setBackground(new Color(75, 75, 75));
