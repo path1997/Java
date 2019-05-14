@@ -195,7 +195,7 @@ public class Interfejs extends Silnik{
                     //odtworz_dzwiek("kill");
                 }
                 else if(line.startsWith(nazwa_gracza+" i ")){
-                    przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setBackground(new Color(75, 75, 75));
+                    przyciski_gracza.get(Integer.parseInt(line.substring(dlugosc_nazwy_gracza+3))).setBackground(new Color(145, 145, 145));
                     for (JButton m : przyciski_przeciwnika) {
                         m.setEnabled(true);
                     }
@@ -209,15 +209,23 @@ public class Interfejs extends Silnik{
                 if(line.substring(7).equals(nazwa_gracza)){
                     JOptionPane.showMessageDialog(frame, "Brawo! Wygrałeś :)");
                     komunikaty.setText("Brawo! Wygrałeś :)");
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Niestety przegrales :/");
-                    komunikaty.setText("Niestety przegrales :/");
+                    nowaGraButton.setEnabled(true);
                 }
-                nowaGraButton.setEnabled(true);
-            } else if(line.startsWith("nowa gra")){
-                wyczysc_tablice();
-                generuj_plansze();
-                out.println("nowagraok");
+            } else if(line.startsWith("przegral")){
+                if(line.substring(9).equals(nazwa_gracza)){
+                    JOptionPane.showMessageDialog(frame, "Niestety przegrales :/");
+                    komunikaty.setText("Przegrales");
+                    nowaGraButton.setEnabled(true);
+                }
+            }else if(line.startsWith("nowa gra")){
+                if(line.substring(9).equals(nazwa_gracza)) {
+                //System.out.println(nazwa_gracza+"jestem");
+                    wyczysc_tablice();
+                    generuj_plansze();
+                    out.println("nowagraok");
+                    nowaGraButton.setEnabled(false);
+
+                }
 
             } else{
                 if(licznik3==0) {

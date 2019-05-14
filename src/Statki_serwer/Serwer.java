@@ -33,7 +33,7 @@ public class Serwer {
     }
 
     private static class Handler extends Thread {
-        static public int[][] tablica1=new int[100][100];
+        static public int[][] tablica1=new int[100][101];
         //static public int[] tablica2=new int[100];
 
         private String name;
@@ -71,6 +71,7 @@ public class Serwer {
                 System.out.println(pozycja);
                 out.println("accepted");
                 while(true) {
+                    tablica1[pozycja][100]=0;
                     //System.out.println("poczatek petli");
                     int licznik = 0;
                     String input = in.readLine();
@@ -105,13 +106,14 @@ public class Serwer {
                     //System.out.println("jestem");
                     //System.out.println(names.get(0) + " " + names.get(1));
                     writers.add(out);
-                    odblokowanie_planszy.add("cos");
+                    //odblokowanie_planszy.add("cos");
+                    tablica1[pozycja][100]=1;
                     //System.out.println(odblokowanie_planszy.size());
-                    synchronized (odblokowanie_planszy) {
+                    //synchronized (odblokowanie_planszy) {
                         /*while (true) {
                             //System.out.println("jestem");
                             if (odblokowanie_planszy == 2) {*/
-                        if (odblokowanie_planszy.size() % 2==0) {
+                        /*if (odblokowanie_planszy.size() % 2==0) {
                             for (PrintWriter writer : writers) {
                                 if(pozycja%2==0) {
                                     writer.println(names.get(pozycja));
@@ -130,13 +132,39 @@ public class Serwer {
                             }
                         }
 
+                    }*/
+                    synchronized (tablica1){
+                        if(pozycja%2==0){
+                            if(tablica1[pozycja][100]==1 && tablica1[pozycja+1][100]==1){
+                                for (PrintWriter writer : writers) {
+                                    writer.println(names.get(pozycja));
+                                    writer.println(names.get(pozycja + 1));
+                                }
+                                for (PrintWriter writer : writers) {
+                                    writer.println(names.get(pozycja) + "1");
+                                }
+                                //break;
+                            }
+                        } else if(pozycja%2==1){
+                            if(tablica1[pozycja-1][100]==1 && tablica1[pozycja][100]==1){
+                                for (PrintWriter writer : writers) {
+                                    writer.println(names.get(pozycja));
+                                    writer.println(names.get(pozycja-1));
+                                }
+                                for (PrintWriter writer : writers) {
+                                    writer.println(names.get(pozycja-1) + "1");
+                                }
+                                //break;
+                            }
+                        }
                     }
+
 
                     while (true) {
                         //System.out.println();
                         int index, wartosc;
                         input = in.readLine();
-                        //System.out.println(input);
+                        System.out.println(input);
                         if(pozycja%2==0){
                         if (input.startsWith(names.get(pozycja))) {
                             index = Integer.parseInt(input.substring(names.get(pozycja).length() + 1));
@@ -151,7 +179,8 @@ public class Serwer {
                             }
                             if (licznik1 == 0) {
                                 for (PrintWriter writer : writers) {
-                                    writer.println("wygral " + names.get(pozycja));
+                                    writer.println("wygral " + names.get(pozycja+1));
+                                    writer.println("przegral " + names.get(pozycja));
                                 }
                             } else {
                                 for (PrintWriter writer : writers) {
@@ -184,6 +213,7 @@ public class Serwer {
                                 if (licznik1 == 0) {
                                     for (PrintWriter writer : writers) {
                                         writer.println("wygral " + names.get(pozycja));
+                                        writer.println("przegral " + names.get(pozycja-1));
                                     }
                                 } else {
                                     for (PrintWriter writer : writers) {
@@ -195,16 +225,25 @@ public class Serwer {
                                         writer.println(names.get(pozycja) + " w " + wartosc);
                                     }
                                 }
-                            } else if (input.startsWith("nowa gra")) {
-                                for (PrintWriter writer : writers) {
-                                    writer.println("nowa gra");
-                                }
-                            } else if(input.startsWith("nowagraok")){
-                                odblokowanie_planszy.clear();
-                                writers.clear();
-                                //System.out.println("nowa gra ok");
-                                break;
                             }
+                        } if (input.startsWith("nowa gra")) {
+                            if(pozycja%2==0) {
+                                for (PrintWriter writer : writers) {
+                                    writer.println("nowa gra "+names.get(pozycja));
+                                    writer.println("nowa gra "+names.get(pozycja+1));
+                                }
+                            }
+                            else {
+                                for (PrintWriter writer : writers) {
+                                    writer.println("nowa gra "+names.get(pozycja));
+                                    writer.println("nowa gra "+names.get(pozycja-1));
+                                }
+                            }
+                        } else if(input.startsWith("nowagraok")){
+                            //odblokowanie_planszy.clear();
+                            //System.out.println("nowa gra ok");
+                            System.out.println("jestem "+pozycja);
+                            break;
                         }
                     /*for (PrintWriter writer : writers) {
                         writer.println(names.get(0));
