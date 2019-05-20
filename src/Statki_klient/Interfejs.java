@@ -203,6 +203,7 @@ public class Interfejs extends Silnik{
                         n.setEnabled(false);
                     }
                 }
+
 //Integer.parseInt(line.substring(5))==null
             }
             else if(line.startsWith("wygral")){
@@ -227,6 +228,8 @@ public class Interfejs extends Silnik{
 
                 }
 
+            }else if(line.startsWith("koniec "+nazwa_gracza)){
+                komunikaty.setText("Przeciwnik opuścił grę! Uruchom ponownie gre");
             } else{
                 if(licznik3==0) {
                     statkiPrzeciwnikaTextField.setText(line);
