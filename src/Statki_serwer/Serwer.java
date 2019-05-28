@@ -48,6 +48,7 @@ public class Serwer {
         }
 
         public void run() {
+            boolean dobrano=false;
             int pozycja;
             pozycja=id;
             id++;
@@ -163,10 +164,12 @@ public class Serwer {
                                 for (PrintWriter writer : writers) {
                                     writer.println(nazwy[pozycja-1] + "1");
                                 }
+
                                 //break;
                             }
                         }
                     }
+                    dobrano=true;
 
 
                     while (true) {
@@ -276,6 +279,9 @@ public class Serwer {
                 if (name != null) {
                     names.remove(name);
                     nazwy[pozycja]="";
+                }
+                if(dobrano==false){
+                    id++;
                 }
                 if (out != null) {
                     writers.remove(out);
